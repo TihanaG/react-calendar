@@ -1,6 +1,7 @@
 import moment from "moment"
 import styled from "styled-components"
 import { getDaysInMonth, segmentIntoWeeks, padWeekFront, padWeekBack, daysOfTheWeek } from "./util"
+import { CalendarCell } from "./CalendarCell";
 
 const CalendarControlsWrap = styled.div`
     height: 15%;
@@ -51,17 +52,7 @@ const CalendarCellWrap = styled.div`
     flex: 1;
 `;
 
-const CalendarCell = styled.div`
-    border: 1px solid #eee;
-    position: relative;
-    height: 100%;
-
-    :hover {
-        background-color: #eee;
-    }
-`;
-
-export const Calendar = ({ month, year, onPrev, onNext }) => {
+export const Calendar = ({ onCellClicked, month, year, onPrev, onNext, events }) => {
     const currentMonthMoment = moment(`${month}${year}`, 'MMYYYY')
 
     const weeks = segmentIntoWeeks(getDaysInMonth(currentMonthMoment))
@@ -88,13 +79,23 @@ export const Calendar = ({ month, year, onPrev, onNext }) => {
                             : week
                     return (
                         <CalendarRow key={i}>
-                            {displayWeek.map((dayMoment, j) => (
-                                <CalendarCellWrap>
-                                    {dayMoment
-                                        ? <CalendarCell key={dayMoment.format('D')}>{dayMoment.format('D')}</CalendarCell>
-                                        : <CalendarCell key={`${i}${j}`}></CalendarCell>}
-                                </CalendarCellWrap>
-                            ))}
+                            {displayWeek.map((dayMoment, j) => {
+                                const eventsForDay = events.filter(event => {
+                                    return event.date.isSame(dayMoment, 'day')
+                                })
+
+                                return (
+                                    <CalendarCellWrap onClick={() => onCellClicked(
+                                        dayMoment.format('DD'),
+                                        dayMoment.format('MM'),
+                                        dayMoment.format('YYYY')
+                                    )}>
+                                        {dayMoment
+                                            ? <CalendarCell dateNumber={dayMoment.format('D')} events={eventsForDay} key={dayMoment.format('D')} />
+                                            : <CalendarCell key={`${i}${j}`} />}
+                                    </CalendarCellWrap>
+                                )  
+                            })}
                         </CalendarRow>
                     )
                 })}

@@ -2,8 +2,14 @@ import { useLocation, useNavigate } from "react-router";
 import moment from "moment";
 import { useState } from 'react'
 import { Calendar } from "./Calendar"
+import { Modal } from "./Modal";
+import { NewEventForm } from "./NewEventForm";
 
 export const QueryParamsCalendarControler = () => {
+    const [events, setEvents] = useState([])
+    const [showNewEventsModal, setShowNewEventsModal] = useState(false) //hidden
+    const [selectedDate, setSelectedDate] = useState(null)
+    
     const { search } = useLocation()
     const navigate = useNavigate()
     const month = new URLSearchParams(search).get('m')
@@ -28,11 +34,35 @@ export const QueryParamsCalendarControler = () => {
         setCurrentMonthMoment(newMonth)
     }
 
+    const createNewEvent = name => {
+        setEvents(events.concat({ name, date: selectedDate }))
+        setShowNewEventsModal(false)
+        setSelectedDate(null)
+    }
+
+    const displayModal = (date, month, year) => {
+        console.log({ date, month, year })
+        setSelectedDate(moment(`${date}${month}${year}`, 'DDMMYYYY'))
+        setShowNewEventsModal(true)
+    }
+
     return (
+        <>
+        <Modal
+            shouldShow={showNewEventsModal}
+            onRequestClose={() => {
+                setShowNewEventsModal(false)
+            }}>
+            <h3>New Event for {selectedDate && selectedDate.format('MM/DD/YYYY')}</h3>
+            <NewEventForm onSubmit={createNewEvent} />
+        </Modal>
         <Calendar
+            events={events}
+            onCellClicked={displayModal}
             month={currentMonthMoment.format('MM')}
             year={currentMonthMoment.format('YYYY')}
             onPrev={decrementMonth}
             onNext={incrementMonth} />
+        </>
     )
 }
