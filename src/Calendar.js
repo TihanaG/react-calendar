@@ -1,48 +1,65 @@
 import moment from "moment"
+import styled from "styled-components"
+import { getDaysInMonth, segmentIntoWeeks, padWeekFront, padWeekBack, daysOfTheWeek } from "./util"
 
-export const getDaysInMonth = monthMoment => {
-    const monthCopy = monthMoment.clone()
-    monthCopy.startOf('month')
+const CalendarControlsWrap = styled.div`
+    height: 15%;
+`;
+const CalendarControls = styled.div`
+    margin: auto;
+    max-width: 400px;
+    text-align: center;
 
-    let days = []
-    
-    while(monthCopy.month() === monthMoment.month()) {
-        days.push(monthCopy.clone())
-        monthCopy.add(1, 'days')
+    button {
+        width: 45%;
+        margin: 0 2%;
     }
+`;
 
-    return days;
-}
+const CalendarTableWrap = styled.div`
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+`;
 
-export const segmentIntoWeeks = dayMoments => {
-    let weeks = []
-    let currentWeek = []
-    for (let day of dayMoments) {
-        currentWeek.push(day.clone())
+const CalendarTable = styled.div`
+    height: 85%;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+`;
 
-        if (day.format('dddd') === 'Saturday') {
-            weeks.push(currentWeek)
-            currentWeek = []
-        }
+const CalendarRow = styled.div`
+    display: flex;
+    flex: 1;
+`;
+
+const CalendarHeading = styled.div`
+    display: flex;
+    flex-direction: row;
+`;
+
+const CalendarHeadingCell = styled.div`
+    flex: 1;
+    text-align: center;
+`;
+
+const CalendarCellWrap = styled.div`
+    padding: 0px;
+    flex: 1;
+`;
+
+const CalendarCell = styled.div`
+    border: 1px solid #eee;
+    position: relative;
+    height: 100%;
+
+    :hover {
+        background-color: #eee;
     }
-
-    if (currentWeek.length > 0) {
-        weeks.push(currentWeek)
-    }
-
-    return weeks
-}
-
-// Funkcija kako bi se prikazala prazna mjesta ako prvi ne pocinjeu nedjelju
-const padWeekFront = (week, padWith = null) => {
-    return [...Array(7 - week.length).fill(padWith), ...week]
-}
-
-const padWeekBack = (week, padWith= null) => {
-    return [...week, ...Array(7 - week.length).fill(padWith)]
-}
-
-const daysOfTheWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+`;
 
 export const Calendar = ({ month, year, onPrev, onNext }) => {
     const currentMonthMoment = moment(`${month}${year}`, 'MMYYYY')
@@ -51,30 +68,38 @@ export const Calendar = ({ month, year, onPrev, onNext }) => {
 
     return (
         <>
-            <h1>{currentMonthMoment.format('MMMM YYYY')}</h1>
-            <button onClick={onPrev}>Prev</button>
-            <button onClick={onNext}>Next</button>
-            <table>
-                <thead>
-                    <tr>{daysOfTheWeek.map(day => <th key={day}>{day}</th>)}</tr>
-                </thead>
-                <tbody>
-                    {weeks.map((week, i) => {
-                        const displayWeek = i === 0
-                            ? padWeekFront(week)
-                            : i === weeks.length - 1
-                                ? padWeekBack(week)
-                                : week
-                        return (
-                            <tr key={i}>
-                                {displayWeek.map((dayMoment, j) => dayMoment
-                                    ? <td key={dayMoment.format('D')}>{dayMoment.format('D')}</td>
-                                    : <td key={`${i}${j}`}></td>)}
-                            </tr>
-                        )
-                    })}
-                </tbody>
-            </table>
+        <CalendarTableWrap >
+            <CalendarControlsWrap>
+                <CalendarControls>
+                    <h1>{currentMonthMoment.format('MMMM YYYY')}</h1>
+                    <button onClick={onPrev}>Prev</button>
+                    <button onClick={onNext}>Next</button>
+                </CalendarControls>
+            </CalendarControlsWrap>
+            <CalendarTable>
+                <CalendarHeading>
+                    {daysOfTheWeek.map(day => <CalendarHeadingCell key={day}>{day}</CalendarHeadingCell>)}
+                </CalendarHeading>
+                {weeks.map((week, i) => {
+                    const displayWeek = i === 0
+                        ? padWeekFront(week)
+                        : i === weeks.length - 1
+                            ? padWeekBack(week)
+                            : week
+                    return (
+                        <CalendarRow key={i}>
+                            {displayWeek.map((dayMoment, j) => (
+                                <CalendarCellWrap>
+                                    {dayMoment
+                                        ? <CalendarCell key={dayMoment.format('D')}>{dayMoment.format('D')}</CalendarCell>
+                                        : <CalendarCell key={`${i}${j}`}></CalendarCell>}
+                                </CalendarCellWrap>
+                            ))}
+                        </CalendarRow>
+                    )
+                })}
+            </CalendarTable>
+        </CalendarTableWrap>
         </>
     )
 }
