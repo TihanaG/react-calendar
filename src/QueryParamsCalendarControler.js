@@ -34,8 +34,8 @@ export const QueryParamsCalendarControler = () => {
         setCurrentMonthMoment(newMonth)
     }
 
-    const createNewEvent = name => {
-        setEvents(events.concat({ name, date: selectedDate }))
+    const createNewEvent = (name, time) => {
+        setEvents(events.concat({ name, time, date: selectedDate }))
         setShowNewEventsModal(false)
         setSelectedDate(null)
     }
@@ -57,7 +57,12 @@ export const QueryParamsCalendarControler = () => {
             <NewEventForm onSubmit={createNewEvent} />
         </Modal>
         <Calendar
-            events={events}
+            getCellProps={(dayMoment) => {
+                const eventsForDay = events.filter(event => {
+                    return event.date.isSame(dayMoment, 'day')
+                })
+                return { events: eventsForDay }
+            }}
             onCellClicked={displayModal}
             month={currentMonthMoment.format('MM')}
             year={currentMonthMoment.format('YYYY')}

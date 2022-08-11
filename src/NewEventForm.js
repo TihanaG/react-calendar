@@ -2,6 +2,7 @@ import { useState } from "react";
 
 export const NewEventForm = ({ onSubmit }) => {
 const [name, setName] = useState('')
+const [time, setTime] = useState('')
 
     return (
         <>
@@ -9,7 +10,11 @@ const [name, setName] = useState('')
             placeholder="Event Name"
             value={name}
             onChange={e => setName(e.target.value)} />
-        <button onClick={() => onSubmit(name)}>Create</button>
+        <input
+            placeholder="i.e. 5:00PM"
+            value={time}
+            onChange={e => setTime(e.target.value)} />
+        <button onClick={() => onSubmit(name, time)}>Create</button>
         </>
     )
 }

@@ -15,7 +15,7 @@ export const CalendarCell = ({ dateNumber = '', events = [] }) => {
     return (
         <Cell>
             {dateNumber}
-            {events.map(event => <Event key={event.name} name={event.name} />)}
+            {events.map(event => <Event key={event.name} name={event.name} time={event.time} />)}
         </Cell>
     )
 }
