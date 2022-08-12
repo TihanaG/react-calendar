@@ -4,8 +4,9 @@ import { useState } from 'react'
 import { Calendar } from "./Calendar"
 import { Modal } from "./Modal";
 import { NewEventForm } from "./NewEventForm";
+import { EventCell } from "./EventCell";
 
-export const QueryParamsCalendarControler = () => {
+export const EventTrackerController = () => {
     const [events, setEvents] = useState([])
     const [showNewEventsModal, setShowNewEventsModal] = useState(false) //hidden
     const [selectedDate, setSelectedDate] = useState(null)
@@ -58,6 +59,7 @@ export const QueryParamsCalendarControler = () => {
         </Modal>
         <Calendar
             getCellProps={(dayMoment) => {
+                // CalendarController indirectly comunicates with Cell without Calendar component
                 const eventsForDay = events.filter(event => {
                     return event.date.isSame(dayMoment, 'day')
                 })
@@ -67,7 +69,8 @@ export const QueryParamsCalendarControler = () => {
             month={currentMonthMoment.format('MM')}
             year={currentMonthMoment.format('YYYY')}
             onPrev={decrementMonth}
-            onNext={incrementMonth} />
+            onNext={incrementMonth}
+            cellComponent={EventCell} />
         </>
     )
 }

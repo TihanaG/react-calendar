@@ -11,7 +11,7 @@ const Cell = styled.div`
     }
 `;
 
-export const CalendarCell = ({ dateNumber = '', events = [] }) => {
+export const EventCell = ({ dateNumber = '', events = [] }) => {
     return (
         <Cell>
             {dateNumber}

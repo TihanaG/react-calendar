@@ -1,13 +1,16 @@
 import { BrowserRouter } from "react-router-dom"
-import { QueryParamsCalendarControler } from './QueryParamsCalendarControler';
 import React from 'react';
 import './App.css';
+// import { SingleDatePickerController } from "./SingleDatePickerController";
+import { DateRangePickerController } from "./DateRangePickerController";
+// import { EventTrackerController } from "./EventTrackerController";
+
 
 function App() {
   return (
     <div>
       <BrowserRouter>
-        <QueryParamsCalendarControler />
+        <DateRangePickerController />
       </BrowserRouter>
     </div>
   );

@@ -1,7 +1,6 @@
 import moment from "moment"
 import styled from "styled-components"
 import { getDaysInMonth, segmentIntoWeeks, padWeekFront, padWeekBack, daysOfTheWeek } from "./util"
-import { CalendarCell } from "./CalendarCell";
 
 const CalendarControlsWrap = styled.div`
     height: 15%;
@@ -17,13 +16,13 @@ const CalendarControls = styled.div`
     }
 `;
 
-const CalendarTableWrap = styled.div`
+/*const CalendarTableWrap = styled.div`
     position: absolute;
     top: 0;
     right: 0;
     left: 0;
     bottom: 0;
-`;
+`;*/
 
 const CalendarTable = styled.div`
     height: 85%;
@@ -52,51 +51,56 @@ const CalendarCellWrap = styled.div`
     flex: 1;
 `;
 
-export const Calendar = ({ onCellClicked, month, year, onPrev, onNext, getCellProps }) => {
+export const Calendar = ({
+    onCellClicked,
+    month,
+    year,
+    onPrev,
+    onNext,
+    getCellProps,
+    cellComponent: CellComponent }) => {
     const currentMonthMoment = moment(`${month}${year}`, 'MMYYYY')
 
     const weeks = segmentIntoWeeks(getDaysInMonth(currentMonthMoment))
 
     return (
         <>
-        <CalendarTableWrap >
-            <CalendarControlsWrap>
-                <CalendarControls>
-                    <h1>{currentMonthMoment.format('MMMM YYYY')}</h1>
-                    <button onClick={onPrev}>Prev</button>
-                    <button onClick={onNext}>Next</button>
-                </CalendarControls>
-            </CalendarControlsWrap>
-            <CalendarTable>
-                <CalendarHeading>
-                    {daysOfTheWeek.map(day => <CalendarHeadingCell key={day}>{day}</CalendarHeadingCell>)}
-                </CalendarHeading>
-                {weeks.map((week, i) => {
-                    const displayWeek = i === 0
-                        ? padWeekFront(week)
-                        : i === weeks.length - 1
-                            ? padWeekBack(week)
-                            : week
-                    return (
-                        <CalendarRow key={i}>
-                            {displayWeek.map((dayMoment, j) => {
-                                return (
-                                    <CalendarCellWrap onClick={() => onCellClicked(
-                                        dayMoment.format('DD'),
-                                        dayMoment.format('MM'),
-                                        dayMoment.format('YYYY')
-                                    )}>
-                                        {dayMoment
-                                            ? <CalendarCell dateNumber={dayMoment.format('D')} {...getCellProps(dayMoment)} key={dayMoment.format('D')} />
-                                            : <CalendarCell key={`${i}${j}`} />}
-                                    </CalendarCellWrap>
-                                )  
-                            })}
-                        </CalendarRow>
-                    )
-                })}
-            </CalendarTable>
-        </CalendarTableWrap>
+        <CalendarControlsWrap>
+            <CalendarControls>
+                <h1>{currentMonthMoment.format('MMMM YYYY')}</h1>
+                <button onClick={onPrev}>Prev</button>
+                <button onClick={onNext}>Next</button>
+            </CalendarControls>
+        </CalendarControlsWrap>
+        <CalendarTable>
+            <CalendarHeading>
+                {daysOfTheWeek.map(day => <CalendarHeadingCell key={day}>{day}</CalendarHeadingCell>)}
+            </CalendarHeading>
+            {weeks.map((week, i) => {
+                const displayWeek = i === 0
+                    ? padWeekFront(week)
+                    : i === weeks.length - 1
+                        ? padWeekBack(week)
+                        : week
+                return (
+                    <CalendarRow key={i}>
+                        {displayWeek.map((dayMoment, j) => {
+                            return (
+                                <CalendarCellWrap onClick={() => onCellClicked(
+                                    dayMoment.format('DD'),
+                                    dayMoment.format('MM'),
+                                    dayMoment.format('YYYY')
+                                )}>
+                                    {dayMoment
+                                        ? <CellComponent dateNumber={dayMoment.format('D')} {...getCellProps(dayMoment)} key={dayMoment.format('D')} />
+                                        : <CellComponent key={`${i}${j}`} />}
+                                </CalendarCellWrap>
+                            )  
+                        })}
+                    </CalendarRow>
+                )
+            })}
+        </CalendarTable>
         </>
     )
 }
