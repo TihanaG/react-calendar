@@ -18,10 +18,30 @@ const CalendarContainer = styled.div`
     width: 600px;
 `;
 
+/* const dateIsBetween = (startDate, endDate, targetDate) => {
+    return targetDate.diff(startDate, 'days') > 0
+        && targetDate.diff(endDate, 'days') < 0
+}*/
+
+const getDatesBetween = (startDate, endDate) => {
+    let currentDate = startDate.clone()
+    let dates = []
+
+    if (endDate.diff(startDate)> 0) {
+        while (endDate.diff(currentDate) >= 0) {
+            dates.push(currentDate.clone())
+            currentDate.add(1, 'days')
+        }
+    }
+
+    return dates
+}
+
 export const DateRangePickerController = () => {
     const [shouldShowDropdown, setShouldShowDropdown] = useState(false) //hidden
     const [selectedStartDate, setSelectedStartDate] = useState(null)
     const [selectedEndDate, setSelectedEndDate] = useState(null)
+    const selectedDates = (selectedStartDate && selectedEndDate && getDatesBetween(selectedStartDate, selectedEndDate)) || []
 
     const [startDateInputIsActive, setStartDateInputIsActive] = useState(false)
     const [endDateInputIsActive, setEndDateInputIsActive] = useState(false)
@@ -40,17 +60,27 @@ export const DateRangePickerController = () => {
     }
 
     const onDateSelected = (date, month, year) => {
+        const selectedMoment = moment(`${date}${month}${year}`, 'DD/MM/YYYY')
         if (startDateInputIsActive) {
-            setSelectedStartDate(moment(`${date}${month}${year}`, 'DD/MM/YYYY'))
-            setStartDateInputIsActive(false)
-            setEndDateInputIsActive(true)
+            if ((selectedEndDate && selectedMoment.diff(selectedEndDate)) > 0) {
+                setSelectedStartDate(selectedEndDate)
+                setSelectedEndDate(selectedMoment)
+            } else {
+                setSelectedStartDate(selectedMoment)
+                setStartDateInputIsActive(false)
+                setEndDateInputIsActive(true)
+            }
         } else {
-            setSelectedEndDate(moment(`${date}${month}${year}`, 'DD/MM/YYYY'))
-            setEndDateInputIsActive(false)
-            //setStartDateInputIsActive(true)
-            //setShouldShowDropdown(false) // kada se klikne na datum kalendar nestane
+            if ((selectedStartDate && selectedMoment.diff(selectedStartDate)) < 0) {
+                setSelectedEndDate(selectedStartDate)
+                setSelectedStartDate(selectedMoment)
+            } else {
+                setSelectedEndDate(selectedMoment)
+                setEndDateInputIsActive(false)
+                setStartDateInputIsActive(true)
+                //setShouldShowDropdown(false) // kada se klikne na datum kalendar nestane
+            }
         }
-        
     }
 
     return (
@@ -85,6 +115,7 @@ export const DateRangePickerController = () => {
                                 isSelected:
                                     dayMoment.isSame(selectedStartDate, 'date')
                                     || dayMoment.isSame(selectedEndDate, 'date')
+                                    || selectedDates.some(selectedDate => selectedDate.isSame(dayMoment, 'date'))
                             }
                         }}
                         onCellClicked={onDateSelected}
