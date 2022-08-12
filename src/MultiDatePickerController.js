@@ -20,14 +20,27 @@ const CalendarContainer = styled.div`
     width: 600px;
 `;
 
-const getPreviousDayIsSelected = (dateMoment, selectedDates) => {
+const getPreviousDateIsSelected = (dateMoment, selectedDates) => {
     const oneDayBefore = dateMoment.clone().subtract(1, 'day')
     return selectedDates.some(date => date.isSame(oneDayBefore, 'date'))
 }
 
-const getNextDayIsSelected = (dateMoment, selectedDates) => {
+const getNextDateIsSelected = (dateMoment, selectedDates) => {
     const oneDayAfter = dateMoment.clone().add(1, 'day')
     return selectedDates.some(date => date.isSame(oneDayAfter, 'date'))
+}
+
+const getDatePosition = (dateMoment, selectedDates) => {
+    const previousIsSelected = getPreviousDateIsSelected(dateMoment, selectedDates)
+    const nextIsSelected = getNextDateIsSelected(dateMoment, selectedDates)
+    const isSelected = selectedDates.some(date => date.isSame(dateMoment, 'date'))
+    
+    return {
+        isSelected,
+        isStart: isSelected && !previousIsSelected && nextIsSelected,
+        isEnd: isSelected && previousIsSelected && !nextIsSelected,
+        isInBetween: isSelected && previousIsSelected && nextIsSelected
+    }
 }
 
 export const MultiDatePickerController = () => {
@@ -76,11 +89,13 @@ export const MultiDatePickerController = () => {
                 <CalendarContainer>
                     <Calendar
                         getCellProps={(dayMoment) => {
+                            const { isSelected, isStart, isEnd, isInBetween } = getDatePosition(dayMoment, selectedDates)
+
                             return {
-                                isSelected: selectedDates.some(selectedDate => selectedDate.isSame(dayMoment, 'date')),
-                                isStart: !getPreviousDayIsSelected(dayMoment, selectedDates) && getNextDayIsSelected(dayMoment, selectedDates),
-                                isEnd: getPreviousDayIsSelected(dayMoment, selectedDates) && !getNextDayIsSelected(dayMoment, selectedDates),
-                                isInBetween: getPreviousDayIsSelected(dayMoment, selectedDates) && getNextDayIsSelected(dayMoment, selectedDates)
+                                isSelected,
+                                isStart,
+                                isEnd,
+                                isInBetween
                             }
                         }}
                         onCellClicked={onDateSelected}
