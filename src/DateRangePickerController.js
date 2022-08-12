@@ -2,8 +2,9 @@ import moment from "moment";
 import styled from "styled-components";
 import { useState } from 'react'
 import { Calendar } from "./Calendar"
-import { DatePickerCell } from "./DatePickerCell";
+// import { DatePickerCell } from "./DatePickerCell";
 import { DropdownWindow } from "./DropdownWindow";
+import { PillCell } from "./PillCell";
 
 const Container = styled.div`
     position: relative;    
@@ -14,7 +15,7 @@ const DateInput = styled.input`
 `;
 
 const CalendarContainer = styled.div`
-    height: 400px;
+    height: 600px;
     width: 600px;
 `;
 
@@ -45,7 +46,7 @@ export const DateRangePickerController = () => {
 
     const [startDateInputIsActive, setStartDateInputIsActive] = useState(false)
     const [endDateInputIsActive, setEndDateInputIsActive] = useState(false)
-
+    
     const today = moment();
     const [currentMonthMoment, setCurrentMonthMoment] = useState(today)
 
@@ -115,7 +116,9 @@ export const DateRangePickerController = () => {
                                 isSelected:
                                     dayMoment.isSame(selectedStartDate, 'date')
                                     || dayMoment.isSame(selectedEndDate, 'date')
-                                    || selectedDates.some(selectedDate => selectedDate.isSame(dayMoment, 'date'))
+                                    || selectedDates.some(selectedDate => selectedDate.isSame(dayMoment, 'date')),
+                                isStart: dayMoment.isSame(selectedStartDate, 'date'),
+                                isEnd: dayMoment.isSame(selectedEndDate, 'date')
                             }
                         }}
                         onCellClicked={onDateSelected}
@@ -123,7 +126,7 @@ export const DateRangePickerController = () => {
                         year={currentMonthMoment.format('YYYY')}
                         onPrev={decrementMonth}
                         onNext={incrementMonth}
-                        cellComponent={DatePickerCell} />
+                        cellComponent={PillCell} />
                 </CalendarContainer>
             </DropdownWindow>
         </Container>
