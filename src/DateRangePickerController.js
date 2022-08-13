@@ -45,7 +45,7 @@ export const DateRangePickerController = () => {
     const selectedDates = (selectedStartDate && selectedEndDate && getDatesBetween(selectedStartDate, selectedEndDate)) || []
 
     const [startDateInputIsActive, setStartDateInputIsActive] = useState(false)
-    const [endDateInputIsActive, setEndDateInputIsActive] = useState(false)
+    const [/*endDateInputIsActive*/, setEndDateInputIsActive] = useState(false)
     
     const today = moment();
     const [currentMonthMoment, setCurrentMonthMoment] = useState(today)
@@ -111,7 +111,8 @@ export const DateRangePickerController = () => {
                 }}>
                 <CalendarContainer>
                     <Calendar
-                        getCellProps={(dayMoment) => {
+                        getCellProps={(date, month, year) => {
+                            const dayMoment = moment(`${date}${month}${year}`, 'DDMMYYYY')
                             return {
                                 isSelected:
                                     dayMoment.isSame(selectedStartDate, 'date')

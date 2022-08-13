@@ -12,6 +12,27 @@ export const getDaysInMonth = monthMoment => {
     return days;
 }
 
+export const getDaysForWeeksInMonth = monthMoment => {
+    const firstDayInMonth = monthMoment.clone().startOf('month')
+    const sundayBeforeMonth = firstDayInMonth.clone().startOf('week')
+    
+    const lastDayInMonth = monthMoment.clone().endOf('month')
+    const sundayAfterMonth = lastDayInMonth.clone()
+        .endOf('week')
+        .add(1, 'days')
+        .startOf('day')
+    
+    const currentDay = sundayBeforeMonth.clone()
+    let days = []
+    
+    while(!currentDay.isSame(sundayAfterMonth, 'date')) {
+        days.push(currentDay.clone())
+        currentDay.add(1, 'days')
+    }
+
+    return days;
+}
+
 export const segmentIntoWeeks = dayMoments => {
     let weeks = []
     let currentWeek = []

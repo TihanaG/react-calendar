@@ -88,7 +88,8 @@ export const MultiDatePickerController = () => {
                 }}>
                 <CalendarContainer>
                     <Calendar
-                        getCellProps={(dayMoment) => {
+                        getCellProps={(date, month, year) => {
+                            const dayMoment = moment(`${date}${month}${year}`, 'DDMMYYYY')
                             const { isSelected, isStart, isEnd, isInBetween } = getDatePosition(dayMoment, selectedDates)
 
                             return {

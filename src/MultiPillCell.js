@@ -21,8 +21,14 @@ const Cell = styled.div`
                     : 'border-radius: 50%;'
         : 'border-radius: 50%;'}
     
-    background-color: ${props => props.isSelected ? 'red' : 'white'};
-    color: ${props => props.isSelected ? 'white' : 'black'};
+    background-color: ${props => props.isInCurrentMonth
+        ? props.isSelected ? 'red' : 'white'
+        : props.isSelected ? 'lightpink' : 'white'};
+    color: ${props => props.isSelected
+        ? 'white'
+        :props.isInCurrentMonth
+            ? 'black'
+            : '#aaa'};
     display: flex;
     font-weight: bold;
     justify-content: center;
@@ -39,6 +45,7 @@ export const MultiPillCell = ({
     isStart,
     isEnd,
     isInBetween,
+    isInCurrentMonth,
     dateNumber = '' }) => {
     return (
         <Container>
@@ -46,7 +53,8 @@ export const MultiPillCell = ({
                 isSelected={isSelected}
                 isStart={isStart}
                 isEnd={isEnd}
-                isInBetween={isInBetween}>
+                isInBetween={isInBetween}
+                isInCurrentMonth={isInCurrentMonth}>
                     {dateNumber}
             </Cell>
         </Container>
