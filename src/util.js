@@ -1,3 +1,7 @@
+export const momentToNumbers = moment => {
+    return [moment.format('DD'), moment.format('MM'), moment.format('YYYY')]
+}
+
 export const getDaysInMonth = monthMoment => {
     const monthCopy = monthMoment.clone()
     monthCopy.startOf('month')

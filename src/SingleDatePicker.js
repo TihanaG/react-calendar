@@ -19,6 +19,7 @@ const CalendarContainer = styled.div`
 `;
 
 export const SingleDatePicker = ( { selectedDate, onDateSelected }) => {
+    const selectedDateMoment = selectedDate && moment(selectedDate, 'DDMMYYYY')
     const [shouldShowDropdown, setShouldShowDropdown] = useState(false) //hidden
     
     const today = moment();
@@ -39,7 +40,7 @@ export const SingleDatePicker = ( { selectedDate, onDateSelected }) => {
             <DateInput
                 readOnly
                 onClick={() => setShouldShowDropdown(true)}
-                value={selectedDate ? selectedDate.format('MM/DD/YYYY') : ''} />
+                value={selectedDateMoment ? selectedDateMoment.format('MM/DD/YYYY') : ''} />
             <DropdownWindow
                 shouldShow={shouldShowDropdown}
                 onRequestClose={() => {
@@ -51,7 +52,7 @@ export const SingleDatePicker = ( { selectedDate, onDateSelected }) => {
                             const dayMoment = moment(`${date}${month}${year}`, 'DDMMYYYY')
                             
                             return {
-                                isSelected: dayMoment.isSame(selectedDate, 'date')
+                                isSelected: selectedDateMoment && dayMoment.isSame(selectedDateMoment, 'date')
                             }
                         }}
                         onCellClicked={ (day, month, year) => {
