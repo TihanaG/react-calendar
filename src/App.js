@@ -31,18 +31,9 @@ function App() {
   /** Multi Date Picker */
   const [selectedMultiDates, setSelectedMultiDates] = useState([])
 
-  const onMultiDateSelected = (date, month, year) => {
-        const clickedMoment = moment(`${date}${month}${year}`, 'DD/MM/YYYY')
-        
-
-        const isSelected = selectedMultiDates.some(date => date.isSame(clickedMoment, 'date'))
-
-        if (isSelected) {
-          setSelectedMultiDates(selectedMultiDates.filter(date => !date.isSame(clickedMoment, 'date')))
-        } else {
-          setSelectedMultiDates(selectedMultiDates.concat(clickedMoment))
-        }
-    }
+  const onDateSelectionChanged = (dateStrings) => {
+    setSelectedMultiDates(dateStrings.map(str => moment(str, 'DDMMYYYY')))
+  }
 
 
   return (
@@ -66,8 +57,8 @@ function App() {
         ? <h1>You are busy on {selectedMultiDates.map(date => date.format('DD/MM/YYYY')).join(', ')}</h1>
         : <h1>Select some dates you will be unavailable</h1>}
         <MultiDatePicker
-          selectedDates={selectedMultiDates}
-          onMultiDateSelected={onMultiDateSelected} />
+          selectedDates={selectedMultiDates.map(date => date.format('DDMMYYYY'))}
+          onDateSelectionChanged={onDateSelectionChanged} />
       </BrowserRouter>
     </div>
   );

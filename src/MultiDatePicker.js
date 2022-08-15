@@ -41,7 +41,8 @@ const getDatePosition = (dateMoment, selectedDates) => {
     }
 }
 
-export const MultiDatePicker = ({ selectedDates, onMultiDateSelected }) => {
+export const MultiDatePicker = ({ selectedDates: selectedDatesRaw, onDateSelectionChanged }) => {
+    const selectedDates = selectedDatesRaw.map(str => moment(str, 'DDMMYYYY '))
     const [shouldShowDropdown, setShouldShowDropdown] = useState(false) //hidden
     
     const today = moment();
@@ -55,6 +56,23 @@ export const MultiDatePicker = ({ selectedDates, onMultiDateSelected }) => {
     const decrementMonth = () => {
         const newMonth = moment(currentMonthMoment.subtract(1, 'months'))
         setCurrentMonthMoment(newMonth)
+    }
+
+    const onDateSelected = (date, month, year) => {
+        const clickedMoment = moment(`${date}${month}${year}`, 'DD/MM/YYYY')
+
+        const isSelected = selectedDates.some(date => date.isSame(clickedMoment, 'date'))
+
+        if (isSelected) {
+          onDateSelectionChanged(
+            selectedDates
+                .filter(date => !date.isSame(clickedMoment, 'date'))
+                .map(date => date.format('DDMMYYYY')))
+        } else {
+          onDateSelectionChanged(
+            selectedDates.concat(clickedMoment)
+                .map(date => date.format('DDMMYYYY')))
+        }
     }
 
     return (
@@ -83,7 +101,7 @@ export const MultiDatePicker = ({ selectedDates, onMultiDateSelected }) => {
                                 isInBetween
                             }
                         }}
-                        onCellClicked={onMultiDateSelected}
+                        onCellClicked={onDateSelected}
                         month={currentMonthMoment.format('MM')}
                         year={currentMonthMoment.format('YYYY')}
                         onPrev={decrementMonth}
